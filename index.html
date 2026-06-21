@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Thumbnail Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>✦ Thumbnail Studio ✦</h1>
+      <p class="subtitle">craft your perfect youtube thumbnail</p>
+    </header>
+
+    <div class="workspace">
+      <!-- Canvas Preview -->
+      <div class="preview-section">
+        <div class="canvas-wrapper">
+          <canvas id="thumbnailCanvas" width="1280" height="720"></canvas>
+        </div>
+        <div class="canvas-actions">
+          <button class="btn btn-primary" id="downloadBtn">↓ Download Thumbnail</button>
+          <button class="btn btn-secondary" id="resetBtn">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- Controls Panel -->
+      <div class="controls-panel">
+
+        <!-- Background -->
+        <section class="control-section">
+          <h2>◈ Background</h2>
+          <div class="control-group">
+            <label>Style</label>
+            <div class="button-grid" id="bgStyleBtns">
+              <button class="style-btn active" data-style="solid">Solid</button>
+              <button class="style-btn" data-style="gradient">Gradient</button>
+              <button class="style-btn" data-style="photo">Photo</button>
+            </div>
+          </div>
+          <div class="control-group" id="solidColorGroup">
+            <label>Color</label>
+            <div class="color-presets">
+              <button class="color-dot" style="background:#2d5a3d" data-color="#2d5a3d"></button>
+              <button class="color-dot" style="background:#1a1a2e" data-color="#1a1a2e"></button>
+              <button class="color-dot" style="background:#f5e6d3" data-color="#f5e6d3"></button>
+              <button class="color-dot" style="background:#3d2b1f" data-color="#3d2b1f"></button>
+              <button class="color-dot" style="background:#4a6fa5" data-color="#4a6fa5"></button>
+              <button class="color-dot" style="background:#c9b99a" data-color="#c9b99a"></button>
+              <button class="color-dot" style="background:#e8d5b7" data-color="#e8d5b7"></button>
+              <button class="color-dot" style="background:#2c3e50" data-color="#2c3e50"></button>
+            </div>
+            <input type="color" id="bgColor" value="#2d5a3d" />
+          </div>
+          <div class="control-group hidden" id="gradientGroup">
+            <label>Color 1</label>
+            <input type="color" id="gradColor1" value="#2d5a3d" />
+            <label>Color 2</label>
+            <input type="color" id="gradColor2" value="#1a1a2e" />
+            <label>Direction</label>
+            <select id="gradDirection">
+              <option value="horizontal">Horizontal →</option>
+              <option value="vertical">Vertical ↓</option>
+              <option value="diagonal">Diagonal ↘</option>
+              <option value="radial">Radial ◎</option>
+            </select>
+          </div>
+          <div class="control-group hidden" id="bgPhotoGroup">
+            <label>Upload Background</label>
+            <label class="file-upload-btn" for="bgPhotoInput">Choose Photo</label>
+            <input type="file" id="bgPhotoInput" accept="image/*" class="hidden-input" />
+            <div class="slider-group">
+              <label>Overlay Opacity <span id="bgOverlayVal">40</span>%</label>
+              <input type="range" id="bgOverlay" min="0" max="100" value="40" />
+            </div>
+            <div class="color-presets">
+              <button class="color-dot" style="background:#000" data-overlay="#000000"></button>
+              <button class="color-dot" style="background:#2d5a3d" data-overlay="#2d5a3d"></button>
+              <button class="color-dot" style="background:#1a1a2e" data-overlay="#1a1a2e"></button>
+            </div>
+            <input type="color" id="bgOverlayColor" value="#000000" />
+          </div>
+        </section>
+
+        <!-- Photo / Subject -->
+        <section class="control-section">
+          <h2>◈ Photo</h2>
+          <div class="control-group">
+            <label class="file-upload-btn" for="photoInput">Upload Photo</label>
+            <input type="file" id="photoInput" accept="image/*" class="hidden-input" />
+          </div>
+          <div id="photoControls" class="hidden">
+            <div class="control-group">
+              <label>Position X <span id="photoXVal">640</span></label>
+              <input type="range" id="photoX" min="0" max="1280" value="640" />
+              <label>Position Y <span id="photoYVal">360</span></label>
+              <input type="range" id="photoY" min="0" max="720" value="360" />
+            </div>
+            <div class="control-group">
+              <label>Scale <span id="photoScaleVal">100</span>%</label>
+              <input type="range" id="photoScale" min="10" max="300" value="100" />
+            </div>
+            <div class="control-group">
+              <label>Flip</label>
+              <button class="btn btn-small" id="flipPhotoBtn">⇄ Flip Horizontal</button>
+            </div>
+            <div class="control-group">
+              <label>Remove Background</label>
+              <button class="btn btn-small" id="removeBgBtn">✂ Remove BG (auto)</button>
+              <p class="hint">Removes white/light backgrounds</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Text Layers -->
+        <section class="control-section">
+          <h2>◈ Text</h2>
+          <div id="textLayersList"></div>
+          <button class="btn btn-secondary btn-full" id="addTextBtn">+ Add Text Layer</button>
+        </section>
+
+        <!-- Decorations -->
+        <section class="control-section">
+          <h2>◈ Decorations</h2>
+          <div class="control-group">
+            <label>Add Shapes & Elements</label>
+            <div class="deco-grid">
+              <button class="deco-btn" data-deco="star">✦ Star</button>
+              <button class="deco-btn" data-deco="heart">♥ Heart</button>
+              <button class="deco-btn" data-deco="circle">◎ Circle</button>
+              <button class="deco-btn" data-deco="squiggle">〜 Squiggle</button>
+              <button class="deco-btn" data-deco="arrow">→ Arrow</button>
+              <button class="deco-btn" data-deco="dot">• Dots</button>
+              <button class="deco-btn" data-deco="badge">◉ Badge</button>
+              <button class="deco-btn" data-deco="leaf">❧ Leaf</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <label>Decoration Color</label>
+            <div class="color-presets">
+              <button class="color-dot" style="background:#f5c842" data-deco-color="#f5c842"></button>
+              <button class="color-dot" style="background:#ff8fab" data-deco-color="#ff8fab"></button>
+              <button class="color-dot" style="background:#a8d8a8" data-deco-color="#a8d8a8"></button>
+              <button class="color-dot" style="background:#ffffff" data-deco-color="#ffffff"></button>
+              <button class="color-dot" style="background:#ff6b35" data-deco-color="#ff6b35"></button>
+              <button class="color-dot" style="background:#c9b99a" data-deco-color="#c9b99a"></button>
+            </div>
+            <input type="color" id="decoColor" value="#f5c842" />
+          </div>
+          <div class="control-group">
+            <label>Decoration Size <span id="decoSizeVal">60</span>px</label>
+            <input type="range" id="decoSize" min="20" max="200" value="60" />
+          </div>
+          <div class="deco-items-list" id="decoItemsList"></div>
+        </section>
+
+        <!-- Border -->
+        <section class="control-section">
+          <h2>◈ Border & Frame</h2>
+          <div class="control-group">
+            <label>Border Style</label>
+            <div class="button-grid">
+              <button class="style-btn active" data-border="none" id="borderBtns">None</button>
+              <button class="style-btn" data-border="solid">Solid</button>
+              <button class="style-btn" data-border="dashed">Dashed</button>
+              <button class="style-btn" data-border="double">Double</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <label>Border Color</label>
+            <input type="color" id="borderColor" value="#f5c842" />
+            <label>Border Width <span id="borderWidthVal">8</span>px</label>
+            <input type="range" id="borderWidth" min="2" max="40" value="8" />
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Text Layer Template (hidden) -->
+  <template id="textLayerTemplate">
+    <div class="text-layer-card">
+      <div class="text-layer-header">
+        <span class="text-layer-label">Text Layer</span>
+        <button class="remove-text-btn">✕</button>
+      </div>
+      <textarea class="text-content" placeholder="Your text here..."></textarea>
+      <div class="text-controls">
+        <div class="mini-group">
+          <label>Font</label>
+          <select class="text-font">
+            <option value="Caveat">Caveat (Handwritten)</option>
+            <option value="Pacifico">Pacifico (Bubbly)</option>
+            <option value="Nunito">Nunito (Clean)</option>
+            <option value="Georgia">Georgia (Classic)</option>
+            <option value="Arial Black">Arial Black (Bold)</option>
+          </select>
+        </div>
+        <div class="mini-group">
+          <label>Size <span class="size-val">80</span>px</label>
+          <input type="range" class="text-size" min="12" max="250" value="80" />
+        </div>
+        <div class="mini-group">
+          <label>Color</label>
+          <div class="color-presets mini">
+            <button class="color-dot sm" style="background:#ffffff" data-tc="#ffffff"></button>
+            <button class="color-dot sm" style="background:#f5c842" data-tc="#f5c842"></button>
+            <button class="color-dot sm" style="background:#ff8fab" data-tc="#ff8fab"></button>
+            <button class="color-dot sm" style="background:#1a1a2e" data-tc="#1a1a2e"></button>
+            <button class="color-dot sm" style="background:#a8d8a8" data-tc="#a8d8a8"></button>
+          </div>
+          <input type="color" class="text-color" value="#ffffff" />
+        </div>
+        <div class="mini-group">
+          <label>Style</label>
+          <div class="text-style-btns">
+            <button class="style-toggle" data-prop="bold" title="Bold">B</button>
+            <button class="style-toggle" data-prop="italic" title="Italic">I</button>
+            <button class="style-toggle" data-prop="shadow" title="Shadow">S</button>
+            <button class="style-toggle" data-prop="stroke" title="Outline">O</button>
+          </div>
+        </div>
+        <div class="mini-group">
+          <label>Stroke Color</label>
+          <input type="color" class="text-stroke-color" value="#000000" />
+          <label>Stroke Width <span class="stroke-val">3</span>px</label>
+          <input type="range" class="text-stroke-width" min="1" max="15" value="3" />
+        </div>
+        <div class="mini-group">
+          <label>Position X <span class="pos-x-val">640</span></label>
+          <input type="range" class="text-pos-x" min="0" max="1280" value="640" />
+          <label>Position Y <span class="pos-y-val">360</span></label>
+          <input type="range" class="text-pos-y" min="0" max="720" value="360" />
+        </div>
+        <div class="mini-group">
+          <label>Rotation <span class="rot-val">0</span>°</label>
+          <input type="range" class="text-rotation" min="-45" max="45" value="0" />
+        </div>
+        <div class="mini-group">
+          <label>Align</label>
+          <div class="button-grid small">
+            <button class="style-btn active" data-align="left">Left</button>
+            <button class="style-btn" data-align="center">Center</button>
+            <button class="style-btn" data-align="right">Right</button>
+          </div>
+        </div>
+        <div class="mini-group">
+          <label>Background</label>
+          <label class="inline-check"><input type="checkbox" class="text-bg-toggle" /> Enable</label>
+          <input type="color" class="text-bg-color" value="#f5c842" />
+          <label>Padding <span class="bg-pad-val">10</span>px</label>
+          <input type="range" class="text-bg-padding" min="0" max="40" value="10" />
+          <label>Rounded <span class="bg-rad-val">8</span>px</label>
+          <input type="range" class="text-bg-radius" min="0" max="50" value="8" />
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
