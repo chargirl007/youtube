@@ -13,3 +13,4 @@ work-*/
 .output.hf-transaction-*/
 *.jpg
 public/sfx/
+.*.hf-transaction-*/
