@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Burbank Big";
+        src: url("fonts/BurbankBigRegular-Black.otf") format("opentype");
+        font-weight: 900;
+        font-display: block;
+      }
+      :root {
+        --pink: #ff3ea5;
+        --yellow: #ffd23f;
+        --red: #e8202a;
+        --purple: #7b2ff7;
+        --ink: #111111;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        font-family: "Burbank Big", sans-serif;
+      }
+      #stage {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+      }
+      .video-wrapper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+      }
+      .video-wrapper video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .card-host {
+        position: absolute;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 3;
+      }
+
+      /* Sticker cards: top band, inside title-safe (x 108-972). */
+      .card.sticker {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .card.sticker .root {
+        position: absolute;
+        left: 50%;
+        top: 150px;
+        width: 860px;
+        margin-left: -430px;
+        padding: 22px 32px 24px;
+        border: 8px solid var(--ink);
+        border-radius: 28px;
+        box-shadow: 14px 14px 0 var(--ink);
+        text-align: center;
+        transform-origin: 50% 50%;
+        color: var(--ink);
+      }
+      .card.sticker.pink .root { background: var(--pink); color: #fff; }
+      .card.sticker.yellow .root { background: var(--yellow); }
+      .card.sticker.red .root { background: var(--red); color: #fff; }
+      .card.sticker.purple .root { background: var(--purple); color: #fff; }
+      .card.sticker .kicker {
+        display: inline-block;
+        font-size: 34px;
+        letter-spacing: 2px;
+        padding: 6px 18px 4px;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 12px;
+        margin-bottom: 14px;
+      }
+      .card.sticker .title {
+        font-size: 84px;
+        line-height: 0.95;
+        text-transform: uppercase;
+      }
+      .card.sticker.big .title {
+        font-size: 132px;
+      }
+      .card.sticker .detail {
+        margin-top: 16px;
+        font-size: 34px;
+        line-height: 1.15;
+      }
+
+      /* Captions: lower-middle, above the Reels caption/username area. */
+      .caption {
+        position: absolute;
+        left: 108px;
+        width: 864px;
+        top: 1180px;
+        height: 260px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 4;
+        pointer-events: none;
+      }
+      .cap-inner {
+        text-align: center;
+        font-size: 104px;
+        line-height: 1;
+        color: #fff;
+        -webkit-text-stroke: 12px var(--ink);
+        paint-order: stroke fill;
+        text-shadow: 0 8px 0 var(--ink);
+      }
+      .cap-inner .hl {
+        color: var(--yellow);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="stage"
+      data-composition-id="talking-head-recut"
+      data-start="0"
+      data-duration="{{DURATION}}"
+      data-fps="30"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div class="video-wrapper" id="video-wrap">
+        <video
+          id="bg-video"
+          src="input-video.mp4"
+          playsinline
+          data-has-audio="true"
+          data-start="0"
+          data-duration="{{DURATION}}"
+          data-track-index="1"
+        ></video>
+      </div>
+
+      {{CARDS}}
+
+      {{CAPTIONS}}
+
+      <script src="vendor/gsap.min.js"></script>
+      <script>
+        (function () {
+          const tl = window.gsap.timeline({ paused: true });
+          {{TIMELINE}}
+          window.__timelines = window.__timelines || {};
+          window.__timelines["talking-head-recut"] = tl;
+        })();
+      </script>
+    </div>
+  </body>
+</html>
