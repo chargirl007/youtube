@@ -96,15 +96,17 @@ SFX = {
     9: ("sparkle", 0.3),
     10: ("chime", 0.7),
 }
+COMPACT = {1, 2}  # opening cards, shrunk so they cover less of the head
+
 SFX_LEN = {"sparkle": 1.8, "whoosh-short": 0.57, "impact-bass-1": 2.12, "pop": 0.72,
            "notification": 2.46, "chime": 2.5}
 
 
-def card_html(i, kicker, title, detail, accent, big):
+def card_html(i, kicker, title, detail, accent, big, compact=False):
     cid = f"card-{i:02d}"
     detail_html = f'<div class="detail" id="{cid}-detail">{escape(detail)}</div>' if detail else ""
     return cid, f"""
-      <div class="card sticker {accent}{' big' if big else ''}" data-card-id="{cid}">
+      <div class="card sticker {accent}{' big' if big else ''}{' compact' if compact else ''}" data-card-id="{cid}">
         <div class="root">
           <div class="kicker" id="{cid}-kicker">{escape(kicker)}</div>
           <div class="title" id="{cid}-title">{escape(title)}</div>
@@ -122,7 +124,7 @@ def main():
         big = extra == "big"
         detail = "" if big else extra
         s2, e2 = remap(s), min(remap(e), DURATION)
-        cid, inner = card_html(i, kicker, title, detail, accent, big)
+        cid, inner = card_html(i, kicker, title, detail, accent, big, i in COMPACT)
         if i in SFX:
             name, gain = SFX[i]
             dur = min(SFX_LEN[name], DURATION - s2)
