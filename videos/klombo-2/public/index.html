@@ -70,45 +70,46 @@
         background: #fff3d6;
       }
 
+      /* Text-only stickers: no box; thick ink outline + hard drop shadow keep them readable. */
       .sticker {
         z-index: 4;
-        padding: 14px 30px 10px;
-        border: 7px solid var(--ink);
-        border-radius: 22px;
-        box-shadow: 10px 10px 0 var(--ink);
         text-align: center;
-        line-height: 1;
+        line-height: 0.95;
         transform-origin: 50% 50%;
+        -webkit-text-stroke: 14px var(--ink);
+        paint-order: stroke fill;
+        text-shadow: 0 9px 0 var(--ink), 0 14px 22px rgba(0, 0, 0, 0.55);
       }
       .sticker .kicker {
-        display: inline-block;
-        font-size: 24px;
-        padding: 4px 14px 2px;
-        background: var(--ink);
+        font-size: 34px;
+        letter-spacing: 2px;
         color: #fff;
-        border-radius: 10px;
-        margin-bottom: 8px;
+        -webkit-text-stroke: 9px var(--ink);
+        text-shadow: 0 5px 0 var(--ink);
+        margin-bottom: 14px;
       }
       #try-me {
-        left: 760px;
-        top: 150px;
-        background: var(--yellow);
-        color: var(--ink);
-        font-size: 78px;
+        left: 780px;
+        top: 140px;
+        color: var(--yellow);
+        font-size: 96px;
       }
       #rage {
         left: 600px;
-        top: 120px;
-        background: var(--red);
+        top: 110px;
+        /* white reads better than red over the red fire glow */
         color: #fff;
-        font-size: 104px;
+        font-size: 128px;
+        text-shadow: 0 9px 0 var(--ink), 0 0 30px rgba(255, 40, 0, 0.9);
+      }
+      #rage .kicker {
+        color: var(--yellow);
       }
       #upset {
-        left: 790px;
-        top: 160px;
-        background: var(--orange);
-        color: var(--ink);
-        font-size: 64px;
+        left: 800px;
+        top: 150px;
+        color: var(--orange);
+        font-size: 84px;
       }
     </style>
   </head>
