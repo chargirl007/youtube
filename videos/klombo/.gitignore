@@ -6,7 +6,6 @@
 *.otf
 public/fonts/
 public/vendor/
-public/index.html
 public/.hyperframes/
 keep.txt
 work-*/

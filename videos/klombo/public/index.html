@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Burbank Big";
+        src: url("fonts/BurbankBigRegular-Black.otf") format("opentype");
+        font-weight: 900;
+        font-display: block;
+      }
+      :root {
+        --pink: #ff3ea5;
+        --yellow: #ffd23f;
+        --red: #e8202a;
+        --purple: #7b2ff7;
+        --blue: #2f8cff;
+        --ink: #111111;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        font-family: "Burbank Big", sans-serif;
+      }
+      #stage {
+        position: relative;
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+      }
+      /* Zoom origin sits on the facecam (top-left, ~0-312 x 200-395). */
+      #video-wrap {
+        position: absolute;
+        inset: 0;
+        transform-origin: 160px 300px;
+      }
+      #video-wrap video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .fx {
+        position: absolute;
+        pointer-events: none;
+        visibility: hidden;
+      }
+
+      /* Twitter -> X swap, centred in the open sky. */
+      #tw {
+        left: 560px;
+        top: 150px;
+        width: 280px;
+        height: 280px;
+        z-index: 3;
+      }
+      #tw .badge {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 8px solid var(--ink);
+        box-shadow: 10px 10px 0 var(--ink);
+        overflow: hidden;
+      }
+      #tw-old {
+        /* bird is a transparent cutout in the PNG; white shows through it */
+        background: #fff;
+      }
+      #tw-old img {
+        width: 100%;
+        height: 100%;
+      }
+      #tw-slash {
+        position: absolute;
+        left: -20px;
+        top: 122px;
+        width: 320px;
+        height: 36px;
+        background: var(--red);
+        border: 6px solid var(--ink);
+        border-radius: 18px;
+      }
+      #tw-new {
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        visibility: hidden;
+      }
+      #tw-new img {
+        width: 58%;
+      }
+
+      /* Strategy stack, right side. */
+      .strat {
+        left: 640px;
+        width: 590px;
+        height: 140px;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 0 26px 0 14px;
+        border: 7px solid var(--ink);
+        border-radius: 24px;
+        box-shadow: 10px 10px 0 var(--ink);
+        transform-origin: 50% 50%;
+      }
+      .strat .icon {
+        width: 112px;
+        height: 112px;
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .strat .icon img,
+      .strat .icon svg {
+        max-width: 112px;
+        max-height: 112px;
+      }
+      .strat .kicker {
+        display: inline-block;
+        font-size: 24px;
+        letter-spacing: 1px;
+        padding: 4px 14px 2px;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 10px;
+      }
+      .strat .title {
+        font-size: 58px;
+        line-height: 1;
+        margin-top: 6px;
+      }
+      #s1 { top: 70px; background: var(--blue); color: #fff; }
+      #s2 { top: 240px; background: var(--red); color: #fff; }
+      #s3 { top: 410px; background: var(--yellow); color: var(--ink); }
+
+      /* Gold + chug jugs, right side. */
+      #gold {
+        left: 690px;
+        top: 250px;
+        width: 480px;
+        z-index: 3;
+        filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.45));
+      }
+      #gold-label {
+        left: 760px;
+        top: 150px;
+        z-index: 4;
+        font-size: 64px;
+        padding: 8px 26px 4px;
+        background: var(--yellow);
+        color: var(--ink);
+        border: 7px solid var(--ink);
+        border-radius: 20px;
+        box-shadow: 8px 8px 0 var(--ink);
+      }
+      .jug {
+        width: 150px;
+        z-index: 4;
+        filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.45));
+      }
+      #jug1 { left: 640px; top: 470px; }
+      #jug2 { left: 1080px; top: 440px; }
+      #jug3 { left: 1110px; top: 190px; }
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="klombo" data-start="0" data-duration="18.8" data-fps="30" data-width="1280" data-height="720">
+      <div id="video-wrap">
+        <video id="bg-video" src="input-video.mp4" playsinline data-has-audio="true" data-start="0" data-duration="18.8" data-track-index="1"></video>
+      </div>
+
+      <div id="tw" class="fx clip" data-start="2.1" data-duration="1.9" data-track-index="2">
+        <div class="badge" id="tw-old"><img src="img/twitter-old.png" alt="" /></div>
+        <div id="tw-slash"></div>
+        <div class="badge" id="tw-new"><img src="img/x-logo.png" alt="" /></div>
+      </div>
+
+      <div id="s1" class="fx strat clip" data-start="4.8" data-duration="6.5" data-track-index="3">
+        <div class="icon"><img src="img/chug-jug.png" alt="" /></div>
+        <div><div class="kicker">STRATEGY 1</div><div class="title">CHUG JUGS</div></div>
+      </div>
+      <div id="s2" class="fx strat clip" data-start="6.8" data-duration="4.6" data-track-index="4">
+        <div class="icon">
+          <svg viewBox="0 0 100 100" width="104" height="104">
+            <path d="M50 88 C20 66 6 50 6 32 C6 18 17 8 30 8 C39 8 46 13 50 20 C54 13 61 8 70 8 C83 8 94 18 94 32 C94 50 80 66 50 88 Z" fill="#ff4d6d" stroke="#111" stroke-width="6" />
+            <rect x="43" y="26" width="14" height="40" rx="3" fill="#fff" />
+            <rect x="30" y="39" width="40" height="14" rx="3" fill="#fff" />
+          </svg>
+        </div>
+        <div><div class="kicker">STRATEGY 2</div><div class="title">DAMAGE-HEAL</div></div>
+      </div>
+      <div id="s3" class="fx strat clip" data-start="9.9" data-duration="1.6" data-track-index="5">
+        <div class="icon"><img src="img/fish.png" alt="" /></div>
+        <div><div class="kicker">STRATEGY 3</div><div class="title">FISHING &amp; FOOD</div></div>
+      </div>
+
+      <div id="gold-label" class="fx clip" data-start="14.55" data-duration="4.25" data-track-index="6">MAX GOLD</div>
+      <img id="gold" class="fx clip" src="img/gold.png" alt="" data-start="14.5" data-duration="4.3" data-track-index="7" />
+      <img id="jug1" class="fx jug clip" src="img/chug-jug.png" alt="" data-start="17.3" data-duration="1.5" data-track-index="8" />
+      <img id="jug2" class="fx jug clip" src="img/chug-jug.png" alt="" data-start="17.45" data-duration="1.35" data-track-index="9" />
+      <img id="jug3" class="fx jug clip" src="img/chug-jug.png" alt="" data-start="17.6" data-duration="1.2" data-track-index="10" />
+
+      <!-- Sound effects (bundled Pixabay library). Cha-ching is a ping+sparkle stand-in. -->
+      <audio id="sfx-tw-pop" class="clip" src="sfx/pop.mp3" data-start="2.1" data-duration="0.72" data-track-index="11" data-volume="1"></audio>
+      <audio id="sfx-tw-x" class="clip" src="sfx/error.mp3" data-start="2.55" data-duration="1.0" data-track-index="12" data-volume="2.5"></audio>
+      <audio id="sfx-tw-swap" class="clip" src="sfx/whoosh-short.mp3" data-start="2.75" data-duration="0.57" data-track-index="13" data-volume="0.7"></audio>
+      <audio id="sfx-s1" class="clip" src="sfx/pop.mp3" data-start="4.8" data-duration="0.72" data-track-index="11" data-volume="1"></audio>
+      <audio id="sfx-s2" class="clip" src="sfx/pop.mp3" data-start="6.8" data-duration="0.72" data-track-index="11" data-volume="1"></audio>
+      <audio id="sfx-s3" class="clip" src="sfx/pop.mp3" data-start="9.9" data-duration="0.72" data-track-index="11" data-volume="1"></audio>
+      <audio id="sfx-zoom" class="clip" src="sfx/whoosh-short.mp3" data-start="11.05" data-duration="0.57" data-track-index="13" data-volume="0.7"></audio>
+      <audio id="sfx-gold-ping" class="clip" src="sfx/ping.mp3" data-start="14.5" data-duration="1.32" data-track-index="12" data-volume="1"></audio>
+      <audio id="sfx-gold-sparkle" class="clip" src="sfx/sparkle.mp3" data-start="14.55" data-duration="1.8" data-track-index="14" data-volume="0.6"></audio>
+      <audio id="sfx-j1" class="clip" src="sfx/pop.mp3" data-start="17.3" data-duration="0.72" data-track-index="11" data-volume="1"></audio>
+      <audio id="sfx-j2" class="clip" src="sfx/pop.mp3" data-start="17.45" data-duration="0.72" data-track-index="12" data-volume="1"></audio>
+      <audio id="sfx-j3" class="clip" src="sfx/pop.mp3" data-start="17.6" data-duration="0.72" data-track-index="13" data-volume="1"></audio>
+
+      <script src="vendor/gsap.min.js"></script>
+      <script>
+        (function () {
+          const tl = window.gsap.timeline({ paused: true });
+          const popIn = (sel, t, rot) => {
+            tl.set(sel, { visibility: "visible" }, t);
+            tl.fromTo(sel, { scale: 0.3, rotation: rot - 10, opacity: 0 }, { scale: 1, rotation: rot, opacity: 1, duration: 0.4, ease: "back.out(2.2)" }, t);
+          };
+          const popOut = (sel, t) => {
+            tl.to(sel, { scale: 0.6, opacity: 0, duration: 0.22, ease: "power2.in" }, t);
+          };
+
+          // ── Camera: gentle push, reset for the strategy list, punch on "so", ease back for the buy line.
+          tl.fromTo("#video-wrap", { scale: 1 }, { scale: 1.06, duration: 2.0, ease: "power1.inOut" }, 0);
+          tl.to("#video-wrap", { scale: 1, duration: 0.6, ease: "power2.inOut" }, 3.9);
+          tl.to("#video-wrap", { scale: 1.45, duration: 0.25, ease: "power3.out" }, 11.1);
+          tl.to("#video-wrap", { scale: 1.52, duration: 3.2, ease: "none" }, 11.35);
+          tl.to("#video-wrap", { scale: 1.15, duration: 0.4, ease: "power2.inOut" }, 16.35);
+
+          // ── Twitter -> X: bird pops on "Twitter", slashed, flips to X on "X".
+          popIn("#tw", 2.1, 0);
+          tl.fromTo("#tw-slash", { rotation: -45, scaleX: 0 }, { rotation: -45, scaleX: 1, duration: 0.15, ease: "power2.out", immediateRender: true }, 2.55);
+          tl.to(["#tw-old", "#tw-slash"], { rotationY: 90, duration: 0.12, ease: "power2.in" }, 2.75);
+          tl.set(["#tw-old", "#tw-slash"], { visibility: "hidden" }, 2.87);
+          tl.set("#tw-new", { visibility: "visible" }, 2.87);
+          tl.fromTo("#tw-new", { rotationY: -90 }, { rotationY: 0, duration: 0.18, ease: "back.out(2)" }, 2.87);
+          popOut("#tw", 3.75);
+
+          // ── Strategy list builds, then clears together.
+          popIn("#s1", 4.8, -1.5);
+          popIn("#s2", 6.8, 1);
+          popIn("#s3", 9.9, -1);
+          popOut("#s1", 11.05);
+          popOut("#s2", 11.1);
+          popOut("#s3", 11.15);
+
+          // ── Gold + cha-ching, then chug jugs on "buy chug jugs".
+          popIn("#gold", 14.5, 0);
+          popIn("#gold-label", 14.55, -4);
+          tl.to("#gold", { y: -8, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 5 }, 14.95);
+          popIn("#jug1", 17.3, -12);
+          popIn("#jug2", 17.45, 10);
+          popIn("#jug3", 17.6, -6);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["klombo"] = tl;
+        })();
+      </script>
+    </div>
+  </body>
+</html>
