@@ -12,3 +12,4 @@ keep.txt
 work-*/
 .output.hf-transaction-*/
 *.jpg
+public/sfx/

@@ -83,6 +83,22 @@ CARDS = [
     (99.4, 101.3, "pink", "THANK YOU STATE FARM", "VERY NEIGHBORLY", ""),
 ]
 
+# Card number -> (bundled media-use SFX, gain). Gains keep peaks under the voice.
+SFX = {
+    1: ("sparkle", 0.3),
+    2: ("whoosh-short", 0.35),
+    3: ("impact-bass-1", 0.18),
+    4: ("pop", 0.5),
+    5: ("notification", 0.45),
+    6: ("pop", 0.5),
+    7: ("pop", 0.5),
+    8: ("pop", 0.5),
+    9: ("sparkle", 0.3),
+    10: ("chime", 0.7),
+}
+SFX_LEN = {"sparkle": 1.8, "whoosh-short": 0.57, "impact-bass-1": 2.12, "pop": 0.72,
+           "notification": 2.46, "chime": 2.5}
+
 
 def card_html(i, kicker, title, detail, accent, big):
     cid = f"card-{i:02d}"
@@ -107,6 +123,12 @@ def main():
         detail = "" if big else extra
         s2, e2 = remap(s), min(remap(e), DURATION)
         cid, inner = card_html(i, kicker, title, detail, accent, big)
+        if i in SFX:
+            name, gain = SFX[i]
+            dur = min(SFX_LEN[name], DURATION - s2)
+            hosts.append(
+                f'<audio id="sfx-{i:02d}" class="clip" src="sfx/{name}.mp3" data-start="{s2:.4f}" '
+                f'data-duration="{dur:.4f}" data-track-index="5" data-volume="{gain}"></audio>')
         hosts.append(
             f'<div class="card-host clip" data-card-id="{cid}" data-start="{s2:.4f}" '
             f'data-duration="{e2 - s2:.4f}" data-track-index="2" '
