@@ -11,3 +11,4 @@ public/.hyperframes/
 keep.txt
 work-*/
 .output.hf-transaction-*/
+*.jpg
