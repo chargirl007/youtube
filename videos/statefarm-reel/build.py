@@ -10,9 +10,9 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 FPS = 30
-DURATION = 101.3667  # cut.mp4 video stream length
+DURATION = 102.6  # source.mp4 video stream (102.617s), frame-aligned
 CUTS = [(a, b) for a, b, _ in json.loads((HERE / "cuts.json").read_text())["remove"]]
-FILLERS = {"um", "uh"}
+FILLERS = set()  # user asked to keep ums/uhs
 HIGHLIGHT = {"state", "farm", "won", "jake", "funko", "pop", "twitch", "rivals",
              "fortnite", "gauntlet", "sweepstakes", "bubble", "head", "mouse", "pad",
              "t-shirt", "neighborly", "wow", "cute"}
