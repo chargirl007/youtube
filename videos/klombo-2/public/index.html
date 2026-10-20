@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Burbank Big";
+        src: url("fonts/BurbankBigRegular-Black.otf") format("opentype");
+        font-weight: 900;
+        font-display: block;
+      }
+      :root {
+        --red: #e8202a;
+        --orange: #ff7a1a;
+        --yellow: #ffd23f;
+        --ink: #111111;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        font-family: "Burbank Big", sans-serif;
+      }
+      #stage {
+        position: relative;
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+      }
+      /* Zoom origin sits on the facecam (top-left, ~0-310 x 200-395). */
+      #video-wrap {
+        position: absolute;
+        inset: 0;
+        transform-origin: 160px 300px;
+      }
+      #video-wrap video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .fx {
+        position: absolute;
+        pointer-events: none;
+        visibility: hidden;
+      }
+
+      /* Rage glow: orange/red vignette that builds from "fire" to "rage". */
+      #fire,
+      #flash {
+        position: absolute;
+        pointer-events: none;
+        opacity: 0;
+      }
+      #fire {
+        inset: 0;
+        z-index: 2;
+        background:
+          radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(255, 110, 0, 0.55) 62%, rgba(220, 20, 0, 0.9) 100%),
+          linear-gradient(0deg, rgba(255, 80, 0, 0.75) 0%, rgba(255, 120, 0, 0.25) 22%, transparent 40%);
+      }
+      #flash {
+        inset: 0;
+        z-index: 5;
+        background: #fff3d6;
+      }
+
+      .sticker {
+        z-index: 4;
+        padding: 14px 30px 10px;
+        border: 7px solid var(--ink);
+        border-radius: 22px;
+        box-shadow: 10px 10px 0 var(--ink);
+        text-align: center;
+        line-height: 1;
+        transform-origin: 50% 50%;
+      }
+      .sticker .kicker {
+        display: inline-block;
+        font-size: 24px;
+        padding: 4px 14px 2px;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 10px;
+        margin-bottom: 8px;
+      }
+      #try-me {
+        left: 760px;
+        top: 150px;
+        background: var(--yellow);
+        color: var(--ink);
+        font-size: 78px;
+      }
+      #rage {
+        left: 600px;
+        top: 120px;
+        background: var(--red);
+        color: #fff;
+        font-size: 104px;
+      }
+      #upset {
+        left: 790px;
+        top: 160px;
+        background: var(--orange);
+        color: var(--ink);
+        font-size: 64px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="klombo-2" data-start="0" data-duration="9.3667" data-fps="30" data-width="1280" data-height="720">
+      <div id="video-wrap">
+        <video id="bg-video" src="input-video.mp4" playsinline data-has-audio="true" data-start="0" data-duration="9.3667" data-track-index="1"></video>
+      </div>
+
+      <div id="fire" class="clip" data-start="4.4" data-duration="4.4" data-track-index="2"></div>
+
+      <div id="try-me" class="fx sticker clip" data-start="1.6" data-duration="2.2" data-track-index="3">
+        <div class="kicker">GO AHEAD</div>
+        <div>TRY ME.</div>
+      </div>
+      <div id="rage" class="fx sticker clip" data-start="6.25" data-duration="1.25" data-track-index="4">
+        <div class="kicker">WARNING</div>
+        <div>RAGE MODE</div>
+      </div>
+      <div id="upset" class="fx sticker clip" data-start="7.5" data-duration="1.8" data-track-index="5">
+        <div class="kicker">STATUS</div>
+        <div>SO UPSET</div>
+      </div>
+
+      <div id="flash" class="clip" data-start="6.25" data-duration="0.3" data-track-index="6"></div>
+
+      <!-- Sound effects (bundled Pixabay library). Riser is trimmed so its peak lands on "rage". -->
+      <audio id="sfx-try" class="clip" src="sfx/pop.mp3" data-start="1.6" data-duration="0.72" data-track-index="7" data-volume="1"></audio>
+      <audio id="sfx-riser" class="clip" src="sfx/riser.mp3" data-start="4.4" data-media-start="8.13" data-duration="1.9" data-track-index="8" data-volume="0.35"></audio>
+      <audio id="sfx-rage" class="clip" src="sfx/impact-bass-1.mp3" data-start="6.25" data-duration="2.12" data-track-index="9" data-volume="0.45"></audio>
+      <audio id="sfx-upset" class="clip" src="sfx/whoosh-short.mp3" data-start="7.5" data-duration="0.57" data-track-index="7" data-volume="0.7"></audio>
+
+      <script src="vendor/gsap.min.js"></script>
+      <script>
+        (function () {
+          const tl = window.gsap.timeline({ paused: true });
+          const popIn = (sel, t, rot) => {
+            tl.set(sel, { visibility: "visible" }, t);
+            tl.fromTo(sel, { scale: 0.3, rotation: rot - 10, opacity: 0 }, { scale: 1, rotation: rot, opacity: 1, duration: 0.35, ease: "back.out(2.4)" }, t);
+          };
+          const popOut = (sel, t) => tl.to(sel, { scale: 0.6, opacity: 0, duration: 0.2, ease: "power2.in" }, t);
+
+          // ── Camera: slow push on the dare, snap in on "kill me", build through the rant, slam on "rage".
+          tl.fromTo("#video-wrap", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 1.3, ease: "power1.inOut" }, 0.3);
+          tl.to("#video-wrap", { scale: 1.3, duration: 0.18, ease: "power3.out" }, 1.6);
+          tl.to("#video-wrap", { scale: 1.05, duration: 0.5, ease: "power2.inOut" }, 3.75);
+          tl.to("#video-wrap", { scale: 1.25, duration: 1.85, ease: "power2.in" }, 4.4);
+          tl.to("#video-wrap", { scale: 1.55, duration: 0.12, ease: "power4.out" }, 6.25);
+          // Deterministic shake on the impact.
+          [[14, -10], [-12, 8], [10, 6], [-8, -6], [5, 4], [0, 0]].forEach(([x, y], i) => {
+            tl.to("#video-wrap", { x, y, duration: 0.05, ease: "none" }, 6.27 + i * 0.05);
+          });
+          tl.to("#video-wrap", { scale: 1.1, duration: 0.5, ease: "power2.inOut" }, 7.45);
+
+          // ── Fire glow builds from "fire" to "rage", flickers, then cools off.
+          tl.fromTo("#fire", { opacity: 0 }, { opacity: 0.6, duration: 1.85, ease: "none" }, 4.4);
+          tl.to("#fire", { opacity: 0.9, duration: 0.1 }, 6.25);
+          tl.to("#fire", { opacity: 0.6, duration: 0.12, yoyo: true, repeat: 7, ease: "sine.inOut" }, 6.4);
+          tl.to("#fire", { opacity: 0, duration: 0.6, ease: "power2.out" }, 8.2);
+
+          // ── White flash on impact.
+          tl.fromTo("#flash", { opacity: 0.85 }, { opacity: 0, duration: 0.28, ease: "power2.out" }, 6.25);
+
+          // ── Stickers.
+          popIn("#try-me", 1.6, -4);
+          popOut("#try-me", 3.6);
+          popIn("#rage", 6.25, -3);
+          tl.to("#rage", { scale: 1.06, duration: 0.08, yoyo: true, repeat: 5, ease: "none" }, 6.6);
+          popOut("#rage", 7.3);
+          popIn("#upset", 7.5, 3);
+          popOut("#upset", 9.1);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["klombo-2"] = tl;
+        })();
+      </script>
+    </div>
+  </body>
+</html>
