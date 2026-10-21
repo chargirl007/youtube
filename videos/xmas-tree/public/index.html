@@ -153,6 +153,25 @@
         paint-order: stroke fill;
         text-shadow: 0 8px 0 var(--ink);
       }
+      /* Christmas beat: snowfall + spirit meter. */
+      #snow {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0;
+      }
+      #snow .flake {
+        position: absolute;
+        top: -40px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+        opacity: 0.9;
+      }
+      #spirit { left: 520px; top: 150px; font-size: 110px; color: var(--red); }
+      #spirit .kicker { font-size: 36px; }
+      #spirit .kicker { color: var(--green); }
     </style>
   </head>
   <body>
@@ -189,7 +208,43 @@
 
       <div id="did" class="fx say clip" data-start="28.6" data-duration="1.7" data-track-index="4">(SHE LITERALLY JUST DID)</div>
 
-      <div id="deserved" class="fx say clip" data-start="33.95" data-duration="2.3" data-track-index="5">HE DESERVED IT.</div>
+      <div id="deserved" class="fx say clip" data-start="33.95" data-duration="0.9" data-track-index="5">HE DESERVED IT.</div>
+
+      <div id="snow" class="clip" data-start="34.85" data-duration="2.6" data-track-index="7">
+        <div class="flake" style="left:10px;width:10px;height:10px;" data-delay="0.000"></div>
+        <div class="flake" style="left:147px;width:17px;height:17px;" data-delay="0.083"></div>
+        <div class="flake" style="left:284px;width:10px;height:10px;" data-delay="0.166"></div>
+        <div class="flake" style="left:421px;width:17px;height:17px;" data-delay="0.249"></div>
+        <div class="flake" style="left:558px;width:10px;height:10px;" data-delay="0.332"></div>
+        <div class="flake" style="left:695px;width:17px;height:17px;" data-delay="0.415"></div>
+        <div class="flake" style="left:832px;width:10px;height:10px;" data-delay="0.498"></div>
+        <div class="flake" style="left:969px;width:17px;height:17px;" data-delay="0.581"></div>
+        <div class="flake" style="left:1106px;width:10px;height:10px;" data-delay="0.664"></div>
+        <div class="flake" style="left:1243px;width:17px;height:17px;" data-delay="0.747"></div>
+        <div class="flake" style="left:120px;width:10px;height:10px;" data-delay="0.830"></div>
+        <div class="flake" style="left:257px;width:17px;height:17px;" data-delay="0.013"></div>
+        <div class="flake" style="left:394px;width:10px;height:10px;" data-delay="0.096"></div>
+        <div class="flake" style="left:531px;width:17px;height:17px;" data-delay="0.179"></div>
+        <div class="flake" style="left:668px;width:10px;height:10px;" data-delay="0.262"></div>
+        <div class="flake" style="left:805px;width:17px;height:17px;" data-delay="0.345"></div>
+        <div class="flake" style="left:942px;width:10px;height:10px;" data-delay="0.428"></div>
+        <div class="flake" style="left:1079px;width:17px;height:17px;" data-delay="0.511"></div>
+        <div class="flake" style="left:1216px;width:10px;height:10px;" data-delay="0.594"></div>
+        <div class="flake" style="left:93px;width:17px;height:17px;" data-delay="0.677"></div>
+        <div class="flake" style="left:230px;width:10px;height:10px;" data-delay="0.760"></div>
+        <div class="flake" style="left:367px;width:17px;height:17px;" data-delay="0.843"></div>
+        <div class="flake" style="left:504px;width:10px;height:10px;" data-delay="0.026"></div>
+        <div class="flake" style="left:641px;width:17px;height:17px;" data-delay="0.109"></div>
+        <div class="flake" style="left:778px;width:10px;height:10px;" data-delay="0.192"></div>
+        <div class="flake" style="left:915px;width:17px;height:17px;" data-delay="0.275"></div>
+        <div class="flake" style="left:1052px;width:10px;height:10px;" data-delay="0.358"></div>
+        <div class="flake" style="left:1189px;width:17px;height:17px;" data-delay="0.441"></div>
+      </div>
+
+      <div id="spirit" class="fx say clip" data-start="34.9" data-duration="2.35" data-track-index="6">
+        <div class="kicker">CHRISTMAS SPIRIT</div>
+        <div>0%</div>
+      </div>
 
       <div id="secured" class="fx say clip" data-start="37.4" data-duration="2.0" data-track-index="4">
         <div class="kicker">STATUS</div>
@@ -211,6 +266,7 @@
       <audio id="sfx-saved" class="clip" src="sfx/sparkle.mp3" data-start="15.0" data-duration="1.8" data-track-index="10" data-volume="0.5"></audio>
       <audio id="sfx-did" class="clip" src="sfx/pop.mp3" data-start="28.6" data-duration="0.72" data-track-index="7" data-volume="1"></audio>
       <audio id="sfx-deserved" class="clip" src="sfx/pop.mp3" data-start="33.95" data-duration="0.72" data-track-index="7" data-volume="1"></audio>
+      <audio id="sfx-jingle" class="clip" src="sfx/jingle.mp3" data-start="34.85" data-duration="2.18" data-track-index="9" data-volume="0.9"></audio>
       <audio id="sfx-secured" class="clip" src="sfx/chime.mp3" data-start="37.4" data-duration="2.0" data-track-index="8" data-volume="1.4"></audio>
 
       <script src="vendor/gsap.min.js"></script>
@@ -280,7 +336,17 @@
           popIn("#did", 28.6, 2);
           popOut("#did", 30.1);
           popIn("#deserved", 33.95, -3);
-          popOut("#deserved", 36.05);
+          popOut("#deserved", 34.65);
+          // Christmas beat: snow drifts down, spirit meter stamps 0%.
+          tl.fromTo("#snow", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 34.85);
+          document.querySelectorAll("#snow .flake").forEach((el, i) => {
+            const d = parseFloat(el.dataset.delay);
+            tl.fromTo(el, { y: 0, x: 0 }, { y: 800, x: (i % 2 ? 30 : -30), duration: 2.3, ease: "none", immediateRender: true }, 34.85 + d * 0.5);
+          });
+          tl.to("#snow", { opacity: 0, duration: 0.3 }, 37.15);
+          popIn("#spirit", 34.9, -3);
+          tl.fromTo("#spirit", { x: 0 }, { x: 10, duration: 0.05, yoyo: true, repeat: 5, ease: "none", immediateRender: false }, 35.6);
+          popOut("#spirit", 37.05);
           popIn("#secured", 37.4, -2);
 
           window.__timelines = window.__timelines || {};
