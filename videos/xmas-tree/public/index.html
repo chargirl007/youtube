@@ -97,7 +97,6 @@
       #lowhp { left: 520px; top: 120px; font-size: 58px; color: var(--red); }
       #ko { position: absolute; pointer-events: none; opacity: 0; left: 0; width: 1280px; top: 200px; font-size: 190px; color: var(--yellow); }
       #saved { left: 600px; top: 120px; font-size: 64px; color: var(--green); }
-      #did { left: 560px; top: 130px; font-size: 48px; color: #fff; }
       #deserved { left: 590px; top: 120px; font-size: 76px; color: var(--pink); }
       #secured { left: 540px; top: 110px; font-size: 64px; color: var(--purple); }
 
@@ -206,7 +205,6 @@
         <div>SAVED!</div>
       </div>
 
-      <div id="did" class="fx say clip" data-start="28.6" data-duration="1.7" data-track-index="4">(SHE LITERALLY JUST DID)</div>
 
       <div id="deserved" class="fx say clip" data-start="33.95" data-duration="0.9" data-track-index="5">HE DESERVED IT.</div>
 
@@ -264,9 +262,7 @@
       <audio id="sfx-riser" class="clip" src="sfx/riser.mp3" data-start="11.4" data-media-start="7.83" data-duration="2.2" data-track-index="8" data-volume="0.35"></audio>
       <audio id="sfx-ko" class="clip" src="sfx/impact-bass-1.mp3" data-start="13.6" data-duration="2.12" data-track-index="9" data-volume="0.4"></audio>
       <audio id="sfx-saved" class="clip" src="sfx/sparkle.mp3" data-start="15.0" data-duration="1.8" data-track-index="10" data-volume="0.5"></audio>
-      <audio id="sfx-did" class="clip" src="sfx/pop.mp3" data-start="28.6" data-duration="0.72" data-track-index="7" data-volume="1"></audio>
       <audio id="sfx-deserved" class="clip" src="sfx/pop.mp3" data-start="33.95" data-duration="0.72" data-track-index="7" data-volume="1"></audio>
-      <audio id="sfx-jingle" class="clip" src="sfx/jingle.mp3" data-start="34.85" data-duration="2.18" data-track-index="9" data-volume="0.9"></audio>
       <audio id="sfx-secured" class="clip" src="sfx/chime.mp3" data-start="37.4" data-duration="2.0" data-track-index="8" data-volume="1.4"></audio>
 
       <script src="vendor/gsap.min.js"></script>
@@ -333,8 +329,6 @@
 
           popIn("#saved", 15.0, -3);
           popOut("#saved", 18.2);
-          popIn("#did", 28.6, 2);
-          popOut("#did", 30.1);
           popIn("#deserved", 33.95, -3);
           popOut("#deserved", 34.65);
           // Christmas beat: snow drifts down, spirit meter stamps 0%.
