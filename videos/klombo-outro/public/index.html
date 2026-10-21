@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Burbank Big";
+        src: url("fonts/BurbankBigRegular-Black.otf") format("opentype");
+        font-weight: 900;
+        font-display: block;
+      }
+      :root {
+        --pink: #ff3ea5;
+        --yellow: #ffd23f;
+        --green: #3ee06b;
+        --purple: #a66bff;
+        --cyan: #3fd8ff;
+        --ink: #111111;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        font-family: "Burbank Big", sans-serif;
+      }
+      #stage {
+        position: relative;
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+      }
+      #video-wrap {
+        position: absolute;
+        inset: 0;
+        transform-origin: 420px 260px;
+      }
+      #video-wrap video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .fx {
+        position: absolute;
+        pointer-events: none;
+        visibility: hidden;
+      }
+
+      /* Text-only stickers: thick ink outline + hard drop shadow. */
+      .say {
+        z-index: 4;
+        text-align: center;
+        line-height: 0.95;
+        -webkit-text-stroke: 12px var(--ink);
+        paint-order: stroke fill;
+        text-shadow: 0 7px 0 var(--ink), 0 12px 20px rgba(0, 0, 0, 0.5);
+        transform-origin: 50% 50%;
+        white-space: nowrap;
+      }
+      .say .kicker {
+        font-size: 30px;
+        letter-spacing: 2px;
+        color: #fff;
+        -webkit-text-stroke: 8px var(--ink);
+        text-shadow: 0 5px 0 var(--ink);
+        margin-bottom: 12px;
+      }
+      #easy { left: 820px; top: 150px; font-size: 92px; color: var(--green); }
+      #tease { left: 760px; top: 170px; font-size: 54px; color: var(--yellow); }
+
+      /* "Next video" slot, sized 16:9, where the YouTube end-screen video element can sit. */
+      #next {
+        z-index: 4;
+        left: 820px;
+        top: 120px;
+        width: 420px;
+        height: 236px;
+      }
+      #next .frame {
+        position: absolute;
+        inset: 0;
+        border: 7px solid #fff;
+        border-radius: 18px;
+        box-shadow: 0 0 0 6px var(--ink), 0 0 30px 6px rgba(166, 107, 255, 0.85);
+        background: rgba(17, 17, 17, 0.25);
+      }
+      #next .label {
+        position: absolute;
+        left: 0;
+        width: 420px;
+        top: -64px;
+        text-align: center;
+        font-size: 52px;
+        color: var(--purple);
+        -webkit-text-stroke: 11px var(--ink);
+        paint-order: stroke fill;
+        text-shadow: 0 6px 0 var(--ink);
+      }
+      #next .play {
+        position: absolute;
+        left: 160px;
+        top: 68px;
+        width: 100px;
+        height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="klombo-outro" data-start="0" data-duration="7.6" data-fps="30" data-width="1280" data-height="720">
+      <div id="video-wrap">
+        <video id="bg-video" src="input-video.mp4" playsinline data-has-audio="true" data-start="0" data-duration="7.6" data-track-index="1"></video>
+      </div>
+
+      <div id="easy" class="fx say clip" data-start="0.6" data-duration="1.75" data-track-index="2">
+        <div class="kicker">THAT WAS</div>
+        <div>TOO EASY</div>
+      </div>
+
+      <div id="tease" class="fx say clip" data-start="2.5" data-duration="2.9" data-track-index="3">
+        <div class="kicker">WHAT HAPPENS WHEN</div>
+        <div>SOMEONE EMOTES<br />ON ME…</div>
+      </div>
+
+      <div id="next" class="fx clip" data-start="5.5" data-duration="2.1" data-track-index="4">
+        <div class="frame"></div>
+        <div class="label">NEXT VIDEO</div>
+        <svg class="play" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="44" fill="#ff3ea5" stroke="#111" stroke-width="7" />
+          <path d="M40 30 L72 50 L40 70 Z" fill="#fff" stroke="#111" stroke-width="5" stroke-linejoin="round" />
+        </svg>
+      </div>
+
+      <!-- Sound effects (bundled Pixabay library). -->
+      <audio id="sfx-easy" class="clip" src="sfx/pop.mp3" data-start="0.6" data-duration="0.72" data-track-index="5" data-volume="1"></audio>
+      <audio id="sfx-tease" class="clip" src="sfx/whoosh-short.mp3" data-start="2.45" data-duration="0.57" data-track-index="6" data-volume="0.8"></audio>
+      <audio id="sfx-next" class="clip" src="sfx/notification.mp3" data-start="5.5" data-duration="2.1" data-track-index="5" data-volume="1.2"></audio>
+
+      <script src="vendor/gsap.min.js"></script>
+      <script>
+        (function () {
+          const tl = window.gsap.timeline({ paused: true });
+          const popIn = (sel, t, rot) => {
+            tl.set(sel, { visibility: "visible" }, t);
+            tl.fromTo(sel, { scale: 0.3, rotation: rot - 8, opacity: 0 }, { scale: 1, rotation: rot, opacity: 1, duration: 0.32, ease: "back.out(2.4)" }, t);
+          };
+          const popOut = (sel, t) => tl.to(sel, { scale: 0.7, opacity: 0, duration: 0.18, ease: "power2.in" }, t);
+
+          // ── Camera: gentle push, small punch on the tease, settle wide for the pointing.
+          tl.fromTo("#video-wrap", { scale: 1 }, { scale: 1.06, duration: 2.3, ease: "power1.inOut" }, 0);
+          tl.to("#video-wrap", { scale: 1.12, duration: 0.15, ease: "power3.out" }, 2.45);
+          tl.to("#video-wrap", { scale: 1.16, duration: 2.8, ease: "none" }, 2.6);
+          tl.to("#video-wrap", { scale: 1, duration: 0.4, ease: "power2.inOut" }, 5.4);
+
+          // ── Stickers.
+          popIn("#easy", 0.6, -4);
+          popOut("#easy", 2.15);
+          popIn("#tease", 2.5, 3);
+          popOut("#tease", 5.2);
+
+          // ── Next-video slot: pops in on "watch this next video", play button pulses.
+          popIn("#next", 5.5, 0);
+          tl.to("#next .frame", { boxShadow: "0 0 0 6px #111, 0 0 46px 14px rgba(166,107,255,1)", duration: 0.35, yoyo: true, repeat: 4, ease: "sine.inOut" }, 5.85);
+          tl.to("#next .play", { scale: 1.12, duration: 0.25, yoyo: true, repeat: 5, ease: "sine.inOut", transformOrigin: "50% 50%" }, 5.85);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["klombo-outro"] = tl;
+        })();
+      </script>
+    </div>
+  </body>
+</html>
