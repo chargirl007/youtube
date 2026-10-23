@@ -16,3 +16,5 @@ public/sfx/
 *.jpeg
 *.webp
 public/index.html
+cover/fonts/
+cover/.hyperframes/
