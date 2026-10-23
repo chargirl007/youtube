@@ -52,42 +52,49 @@
       }
       /* Scrapbook: the cut-out with a white sticker edge, nudged right and a touch larger. */
       #person {
-        transform: translate(70px, 60px) scale(1.04);
-        transform-origin: 50% 40%;
-        filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.35));
+        filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.3));
       }
 
-      /* Hand-drawn hearts row, like the reference doodles. */
-      #hearts {
-        position: absolute;
-        left: 130px;
-        top: 300px;
-        width: 380px;
-        height: 90px;
-        transform: rotate(-8deg);
-      }
 
       #tag {
         position: absolute;
-        left: 96px;
-        top: 410px;
-        transform: rotate(-6deg);
+        left: 0;
+        width: 1080px;
+        top: 236px;
+        text-align: center;
         font-family: "Caveat", sans-serif;
         font-weight: 700;
-        font-size: 64px;
+        font-size: 60px;
         color: #fff;
         -webkit-text-stroke: 3px var(--ink);
         paint-order: stroke fill;
       }
 
-      /* Title: chunky white with ink outline, slight tilt, bracketed hand-lettered line. */
+      /* Title: arched over her head (top band, above the eyes). */
+      #arch {
+        position: absolute;
+        left: 0;
+        top: 250px;
+        width: 1080px;
+        height: 300px;
+        overflow: visible;
+      }
+      #arch text {
+        font-family: "Burbank Big", sans-serif;
+        font-size: 82px;
+        letter-spacing: 0px;
+        fill: #fff;
+        stroke: var(--ink);
+        stroke-width: 12px;
+        paint-order: stroke fill;
+        stroke-linejoin: round;
+      }
       #title {
         position: absolute;
         left: 0;
         width: 1080px;
-        top: 1010px;
+        top: 432px;
         text-align: center;
-        transform: rotate(-4deg);
       }
       .big {
         font-family: "Burbank Big", sans-serif;
@@ -103,7 +110,7 @@
         margin-top: 8px;
         font-family: "Caveat", sans-serif;
         font-weight: 700;
-        font-size: 128px;
+        font-size: 94px;
         line-height: 1;
         color: var(--green);
         -webkit-text-stroke: 12px #fff;
@@ -116,26 +123,16 @@
         position: absolute;
         filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35));
       }
-      #leaf1 { left: 820px; top: 280px; width: 150px; transform: rotate(18deg); }
-      #leaf2 { left: 70px; top: 1440px; width: 120px; transform: rotate(-24deg); }
+      #leaf1 { left: 900px; top: 520px; width: 120px; transform: rotate(18deg); }
+      #leaf2 { left: 60px; top: 520px; width: 120px; transform: rotate(-70deg); }
       #basket { left: 830px; top: 1420px; width: 170px; transform: rotate(10deg); }
       #squiggle { left: 690px; top: 1350px; width: 150px; transform: rotate(-10deg); }
     </style>
   </head>
   <body>
     <div id="stage" data-composition-id="storytime-cover" data-start="0" data-duration="1" data-fps="30" data-width="1080" data-height="1920">
-      <img class="layer" src="bg_soft.jpg" alt="" />
-      <img id="person" class="layer" src="person_sticker_1080.png" alt="" />
+      <img class="layer" src="bg.jpg" alt="" />
 
-      <svg id="hearts" viewBox="0 0 380 90">
-        <g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M30 70 C10 52 6 36 18 28 C26 23 33 28 36 36 C40 27 49 23 56 29 C66 38 56 54 30 70 Z" />
-          <path d="M110 64 C92 48 88 34 99 27 C106 23 113 27 116 34 C119 26 127 22 133 28 C142 36 133 50 110 64 Z" />
-          <path d="M188 58 C172 44 168 32 178 26 C184 22 190 26 193 32 C196 25 203 22 209 27 C217 34 209 46 188 58 Z" />
-          <path d="M262 52 C248 40 245 30 253 25 C259 22 264 25 266 30 C269 24 275 21 280 26 C287 32 280 42 262 52 Z" />
-          <path d="M330 46 C318 36 316 28 322 24 C327 21 331 24 333 28 C335 23 340 21 344 25 C350 30 344 38 330 46 Z" />
-        </g>
-      </svg>
       <div id="tag">storytime ✦</div>
 
       <svg id="leaf1" class="sticker" viewBox="0 0 120 120">
@@ -161,8 +158,11 @@
         <path d="M6 40 C26 10 40 54 60 26 C80 2 92 50 112 22 C122 10 134 18 144 12" fill="none" stroke="#d9a8ff" stroke-width="7" stroke-linecap="round" />
       </svg>
 
+      <svg id="arch" viewBox="0 0 1080 300">
+        <path id="arc" d="M 30 280 Q 540 0 1050 280" fill="none" />
+        <text><textPath href="#arc" startOffset="50%" text-anchor="middle">I ALMOST GOT IN A FIGHT</textPath></text>
+      </svg>
       <div id="title">
-        <div class="big">I ALMOST GOT IN<br />A FIGHT</div>
         <div class="hand">[with a thief]</div>
       </div>
 
