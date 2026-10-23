@@ -1,0 +1,17 @@
+# Repo is public: keep footage, transcript, licensed font and renders out of git.
+*.mp4
+*.wav
+*.png
+*.srt
+*.otf
+public/fonts/
+public/vendor/
+public/.hyperframes/
+keep.txt
+work-*/
+.output.hf-transaction-*/
+*.jpg
+public/sfx/
+.*.hf-transaction-*/
+*.jpeg
+*.webp
