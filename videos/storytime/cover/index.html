@@ -58,13 +58,12 @@
 
       #tag {
         position: absolute;
-        left: 0;
-        width: 1080px;
-        top: 44px;
-        text-align: center;
+        left: 22px;
+        top: 430px;
+        transform: rotate(-10deg);
         font-family: "Caveat", sans-serif;
         font-weight: 700;
-        font-size: 56px;
+        font-size: 52px;
         color: #fff;
         -webkit-text-stroke: 3px var(--ink);
         paint-order: stroke fill;
@@ -74,20 +73,24 @@
       #arch {
         position: absolute;
         left: 0;
-        top: 70px;
+        top: 0px;
         width: 1080px;
-        height: 300px;
+        height: 380px;
         overflow: visible;
       }
       #arch text {
         font-family: "Burbank Big", sans-serif;
-        font-size: 82px;
+        font-size: 94px;
         letter-spacing: 0px;
         fill: #fff;
         stroke: var(--ink);
         stroke-width: 12px;
         paint-order: stroke fill;
         stroke-linejoin: round;
+      }
+      #arch text.green {
+        font-size: 92px;
+        fill: var(--green);
       }
       #title {
         position: absolute;
@@ -123,8 +126,8 @@
         position: absolute;
         filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35));
       }
-      #leaf1 { left: 930px; top: 330px; width: 100px; transform: rotate(18deg); }
-      #leaf2 { left: 50px; top: 330px; width: 100px; transform: rotate(-70deg); }
+      #leaf1 { left: 935px; top: 350px; width: 100px; transform: rotate(18deg); }
+      #leaf2 { left: 50px; top: 520px; width: 80px; transform: rotate(-70deg); }
       #basket { left: 905px; top: 880px; width: 140px; transform: rotate(10deg); }
     </style>
   </head>
@@ -154,13 +157,12 @@
         </g>
       </svg>
 
-      <svg id="arch" viewBox="0 0 1080 300">
-        <path id="arc" d="M 30 250 Q 540 0 1050 250" fill="none" />
+      <svg id="arch" viewBox="0 0 1080 380">
+        <path id="arc" d="M 14 250 Q 540 -40 1066 250" fill="none" />
+        <path id="arc2" d="M 170 345 Q 540 125 910 345" fill="none" />
         <text><textPath href="#arc" startOffset="50%" text-anchor="middle">I ALMOST GOT IN A FIGHT</textPath></text>
+        <text class="green"><textPath href="#arc2" startOffset="50%" text-anchor="middle">[WITH A THIEF]</textPath></text>
       </svg>
-      <div id="title">
-        <div class="hand">[with a thief]</div>
-      </div>
 
       <script>
         window.__timelines = window.__timelines || {};
