@@ -16,13 +16,13 @@ FIXES = {
     "the Grapple Gal": "TheGrappleGirl",
     "maybe I was much of a vigilante": "maybe I was a bit much of a vigilante",
     "an active pursuit of death": "an active theft",
-    "about to scrabble": "about to scrap",
+    "from which I came came into": "from which I came into",
 }
 
 # Words that get the accent colour in captions. Kept short on purpose.
 ACCENT_GREEN = {"thief", "walgreens", "vigilante", "supervisor", "code", "theft", "basket", "purse",
                 "poison", "ivy", "thegrapplegirl", "five", "years"}
-ACCENT_RED = {"fight", "no", "heck", "scabies", "apart", "scrap", "stealing", "nail"}
+ACCENT_RED = {"fight", "no", "heck", "scabies", "apart", "scrabble", "stealing", "nail"}
 
 
 def q(t):
