@@ -12,12 +12,17 @@ FPS = 30
 DURATION = 190.9
 
 # Caption text fixes (spoken name confirmed by the creator); everything else verbatim.
-FIXES = {"the Grapple Gal": "TheGrappleGirl"}
+FIXES = {
+    "the Grapple Gal": "TheGrappleGirl",
+    "maybe I was much of a vigilante": "maybe I was a bit much of a vigilante",
+    "an active pursuit of death": "an active theft",
+    "about to scrabble": "about to scrap",
+}
 
 # Words that get the accent colour in captions. Kept short on purpose.
 ACCENT_GREEN = {"thief", "walgreens", "vigilante", "supervisor", "code", "theft", "basket", "purse",
                 "poison", "ivy", "thegrapplegirl", "five", "years"}
-ACCENT_RED = {"fight", "no", "heck", "scabies", "apart", "scrabble", "stealing", "nail"}
+ACCENT_RED = {"fight", "no", "heck", "scabies", "apart", "scrap", "stealing", "nail"}
 
 
 def q(t):
