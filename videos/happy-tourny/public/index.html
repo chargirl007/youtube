@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Burbank Big";
+        src: url("fonts/BurbankBigRegular-Black.otf") format("opentype");
+        font-weight: 900;
+        font-display: block;
+      }
+      /* Spooky-doll palette pulled from the footage: costume blush pink, room purple, host red. */
+      :root {
+        --pink: #ff6fc8;
+        --purple: #a66bff;
+        --red: #ff3b4e;
+        --yellow: #ffd23f;
+        --ink: #14081c;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        font-family: "Burbank Big", sans-serif;
+      }
+      #stage {
+        position: relative;
+        width: 720px;
+        height: 1280px;
+        overflow: hidden;
+      }
+      #video-wrap {
+        position: absolute;
+        inset: 0;
+        transform-origin: 360px 340px;
+      }
+      #video-wrap video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .fx {
+        position: absolute;
+        pointer-events: none;
+        visibility: hidden;
+      }
+
+      /* Text-only stickers: thick ink outline + hard drop shadow. */
+      .say {
+        z-index: 5;
+        text-align: center;
+        line-height: 0.95;
+        -webkit-text-stroke: 10px var(--ink);
+        paint-order: stroke fill;
+        text-shadow: 0 6px 0 var(--ink), 0 10px 18px rgba(0, 0, 0, 0.45);
+        transform-origin: 50% 50%;
+        white-space: nowrap;
+      }
+      .say .kicker {
+        font-size: 24px;
+        letter-spacing: 2px;
+        color: #fff;
+        -webkit-text-stroke: 7px var(--ink);
+        text-shadow: 0 4px 0 var(--ink);
+        margin-bottom: 14px;
+      }
+
+      /* Hook sits over the browser chrome of the stream capture (low-value pixels). */
+      #hook { left: 0; width: 720px; top: 510px; font-size: 62px; color: var(--pink); }
+      /* Top-cam stickers live over the empty chair on the right. */
+      #emote { left: 0; width: 700px; text-align: right; top: 150px; font-size: 54px; color: var(--yellow); }
+      #lost { left: 0; width: 700px; text-align: right; top: 140px; font-size: 48px; color: var(--pink); }
+      #invite { left: 0; width: 700px; text-align: right; top: 160px; font-size: 42px; color: #fff; }
+
+      /* Magnified host cam: the tiny reaction window blown up over the stream sidebar. */
+      #host {
+        z-index: 4;
+        left: 22px;
+        top: 672px;
+        width: 248px;
+        height: 296px;
+      }
+      #host .frame {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 248px;
+        height: 244px;
+        border: 5px solid #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 0 4px var(--ink), 0 10px 24px rgba(0, 0, 0, 0.5);
+      }
+      #host video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #host .tag {
+        position: absolute;
+        left: 6px;
+        top: -34px;
+        font-size: 26px;
+        color: #fff;
+        -webkit-text-stroke: 7px var(--ink);
+        paint-order: stroke fill;
+        white-space: nowrap;
+      }
+      #host .tag b {
+        color: var(--red);
+        font-weight: inherit;
+      }
+      /* Reaction meter under the host cam. */
+      #host .meter {
+        position: absolute;
+        left: 0;
+        top: 254px;
+        width: 248px;
+        height: 34px;
+        border: 4px solid var(--ink);
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.85);
+        overflow: hidden;
+      }
+      #host .fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0;
+        background: linear-gradient(90deg, var(--purple), var(--pink), var(--red));
+      }
+      #host .mlabel {
+        position: absolute;
+        inset: 0;
+        text-align: center;
+        font-size: 18px;
+        line-height: 26px;
+        letter-spacing: 1px;
+        color: var(--ink);
+      }
+
+      /* Captions: one spot at the top of the empty band, above the Reels caption area. */
+      .cap {
+        position: absolute;
+        left: 40px;
+        width: 640px;
+        top: 984px;
+        height: 84px;
+        z-index: 6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+      .cap-in {
+        text-align: center;
+        font-size: 40px;
+        line-height: 1;
+        color: #fff;
+        -webkit-text-stroke: 8px var(--ink);
+        paint-order: stroke fill;
+        text-shadow: 0 4px 0 var(--ink);
+      }
+      .cap-in .hl {
+        color: var(--pink);
+      }
+
+      /* Split-screen beat: banner on the seam. */
+      #joins { left: 0; width: 720px; top: 630px; font-size: 76px; color: var(--yellow); }
+      #duo { left: 0; width: 720px; top: 636px; font-size: 60px; color: var(--pink); }
+      #host-label { left: 470px; top: 1000px; font-size: 30px; color: #fff; }
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="happy-tourny" data-start="0" data-duration="33.9" data-fps="30" data-width="720" data-height="1280">
+      <div id="video-wrap">
+        <video id="bg-video" src="input-video.mp4" playsinline data-has-audio="true" data-start="0" data-duration="33.9" data-track-index="1"></video>
+      </div>
+
+      <div id="hook" class="fx say clip" data-start="0.0" data-duration="5.9" data-track-index="2">
+        <div class="kicker">HAPPYHAPPYGAL'S SPOOKY SMACKDOWN</div>
+        <div>WATCH THE HOST 👀</div>
+      </div>
+
+      <div id="host" class="fx clip" data-start="3.9" data-duration="22.567" data-track-index="3">
+        <div class="tag"><b>HOST</b> · HappyHappyGal</div>
+        <div class="frame">
+          <video id="host-video" src="host-cam.mp4" muted playsinline data-start="3.9" data-media-start="3.9" data-duration="22.567" data-track-index="4"></video>
+        </div>
+        <div class="meter"><div class="fill" id="meter-fill"></div><div class="mlabel" id="meter-label">REACTION METER</div></div>
+      </div>
+
+      <div id="emote" class="fx say clip" data-start="6.0" data-duration="3.4" data-track-index="5">
+        <div class="kicker">THE EMOTE</div>
+        <div>IN REAL LIFE</div>
+      </div>
+
+      <div id="lost" class="fx say clip" data-start="14.8" data-duration="4.0" data-track-index="5">
+        <div class="kicker">STATUS</div>
+        <div>HOST LOST IT 😂</div>
+      </div>
+
+      <div id="invite" class="fx say clip" data-start="24.55" data-duration="1.9" data-track-index="5">
+        <div class="kicker">INVITE SENT</div>
+        <div>"DO IT WITH ME!"</div>
+      </div>
+
+      <div id="joins" class="fx say clip" data-start="26.47" data-duration="2.4" data-track-index="6">
+        <div class="kicker">PLOT TWIST</div>
+        <div>THE HOST JOINS IN!</div>
+      </div>
+      <div id="duo" class="fx say clip" data-start="31.0" data-duration="2.9" data-track-index="6">SPOOKY DUO 🎃</div>
+      <div id="host-label" class="fx say clip" data-start="27.0" data-duration="6.9" data-track-index="7">HappyHappyGal</div>
+
+      <!-- Captions (SRT is line-level; each line shows for its full span). -->
+      <div class="cap clip" id="cap-1" data-start="0.0" data-duration="1.866" data-track-index="8"><div class="cap-in">here's my favorite moment</div></div>
+      <div class="cap clip" id="cap-2" data-start="1.866" data-duration="2.05" data-track-index="8"><div class="cap-in">from <span class="hl">HappyHappyGal's</span> Spooky Smackdown</div></div>
+      <div class="cap clip" id="cap-3" data-start="14.633" data-duration="2.65" data-track-index="8"><div class="cap-in">she does it! oh god <span class="hl">hahaha</span></div></div>
+      <div class="cap clip" id="cap-4" data-start="19.516" data-duration="2.234" data-track-index="8"><div class="cap-in">thank you! why did I think to do that</div></div>
+      <div class="cap clip" id="cap-5" data-start="21.75" data-duration="2.8" data-track-index="8"><div class="cap-in">we could have done it in the doll package</div></div>
+      <div class="cap clip" id="cap-6" data-start="24.55" data-duration="1.917" data-track-index="8"><div class="cap-in">hold on Happy, you should <span class="hl">do it with me</span></div></div>
+
+      <!-- Sound effects (bundled Pixabay library), kept under the emote music. -->
+      <audio id="sfx-hook" class="clip" src="sfx/whoosh-short.mp3" data-start="0.0" data-duration="0.57" data-track-index="10" data-volume="0.5"></audio>
+      <audio id="sfx-host" class="clip" src="sfx/pop.mp3" data-start="3.9" data-duration="0.72" data-track-index="11" data-volume="0.8"></audio>
+      <audio id="sfx-riser" class="clip" src="sfx/riser.mp3" data-start="9.6" data-media-start="4.83" data-duration="5.2" data-track-index="12" data-volume="0.25"></audio>
+      <audio id="sfx-lost" class="clip" src="sfx/sparkle.mp3" data-start="14.8" data-duration="1.8" data-track-index="13" data-volume="0.45"></audio>
+      <audio id="sfx-invite" class="clip" src="sfx/notification.mp3" data-start="24.55" data-duration="1.9" data-track-index="10" data-volume="1.1"></audio>
+      <audio id="sfx-joins" class="clip" src="sfx/impact-bass-1.mp3" data-start="26.47" data-duration="2.12" data-track-index="11" data-volume="0.3"></audio>
+      <audio id="sfx-duo" class="clip" src="sfx/pop.mp3" data-start="31.0" data-duration="0.72" data-track-index="12" data-volume="0.8"></audio>
+
+      <script src="vendor/gsap.min.js"></script>
+      <script>
+        (function () {
+          const tl = window.gsap.timeline({ paused: true });
+          const popIn = (sel, t, rot) => {
+            tl.set(sel, { visibility: "visible" }, t);
+            tl.fromTo(sel, { scale: 0.4, rotation: rot - 6, opacity: 0 }, { scale: 1, rotation: rot, opacity: 1, duration: 0.3, ease: "back.out(2)" }, t);
+          };
+          const popOut = (sel, t) => tl.to(sel, { scale: 0.8, opacity: 0, duration: 0.18, ease: "power2.in" }, t);
+
+          // ── Captions fade in.
+          ["#cap-1", "#cap-2", "#cap-3", "#cap-4", "#cap-5", "#cap-6"].forEach((sel) => {
+            const el = document.querySelector(sel);
+            const t = parseFloat(el.dataset.start);
+            tl.fromTo(sel + " .cap-in", { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.15, ease: "power2.out" }, t);
+          });
+
+          // ── Hook.
+          popIn("#hook", 0.0, -2);
+          popOut("#hook", 5.7);
+
+          // ── Host cam magnifier + reaction meter that climbs through the emote and maxes on her laugh.
+          popIn("#host", 3.9, 0);
+          tl.fromTo("#meter-fill", { width: "8%" }, { width: "55%", duration: 4.0, ease: "power1.inOut" }, 6.0);
+          tl.to("#meter-fill", { width: "100%", duration: 4.8, ease: "power2.in" }, 10.0);
+          tl.call(function () { const el = document.querySelector("#meter-label"); if (el) el.textContent = "REACTION METER"; }, null, 6.0);
+          tl.call(function () { const el = document.querySelector("#meter-label"); if (el) el.textContent = "MAXED OUT!"; }, null, 14.8);
+          tl.fromTo("#host .frame", { scale: 1 }, { scale: 1.06, duration: 0.15, yoyo: true, repeat: 3, ease: "power2.out" }, 14.8);
+          popOut("#host", 26.25);
+
+          // ── Top-cam stickers.
+          popIn("#emote", 6.0, -4);
+          popOut("#emote", 9.2);
+          popIn("#lost", 14.8, 3);
+          popOut("#lost", 18.6);
+          popIn("#invite", 24.55, -3);
+          popOut("#invite", 26.3);
+
+          // ── Split screen: host joins. One gentle push on the duo, nothing aggressive.
+          popIn("#joins", 26.47, -2);
+          popOut("#joins", 28.7);
+          popIn("#host-label", 27.0, -2);
+          tl.fromTo("#video-wrap", { scale: 1 }, { scale: 1.04, duration: 4.0, ease: "sine.inOut", immediateRender: false }, 27.0);
+          popIn("#duo", 31.0, 2);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["happy-tourny"] = tl;
+        })();
+      </script>
+    </div>
+  </body>
+</html>
