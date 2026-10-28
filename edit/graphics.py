@@ -179,10 +179,10 @@ def list_card(out_dir, prefix, heading, items, sub=None, y0=150, item_gap=58,
         save(layer(fn), out_dir, f"{prefix}_{i}")
 
 
-def two_blocks(out_dir, prefix, blocks, y0=210, gap=146):
+def two_blocks(out_dir, prefix, blocks, y0=210, gap=146, body_size=32):
     """GOAL vs UNREALISTIC EXPECTATION, stacked (left wall is narrow)."""
     hf = inter("SemiBold", 20)
-    bf = lora(32, italic=True)
+    bf = lora(body_size, italic=True)
     w = max(max(max(text_w(hf, l, 4) for l in h.split("\n")), bf.getlength(b)) for h, b in blocks)
     last_h = 28 * blocks[-1][0].count("\n")
     save(panel((LEFT - PANEL_PAD - 4, y0 - 32, LEFT + w + PANEL_PAD + 4, y0 + gap * (len(blocks) - 1) + last_h + 100)),
@@ -227,6 +227,65 @@ def stacked_lower(out_dir, name, lines, size=22, tracking=4, gap=34):
     for i, s in enumerate(lines):
         draw_text(d, (LEFT + 6, y0 + i * gap), s, f, CREAM, tracking)
     save(img, out_dir, name)
+
+
+def keyword(out_dir, name, s, size=34, max_w=320, y_center=330):
+    """Short all-caps key phrase on a compact card."""
+    f = inter("Bold", size)
+    tracking = 3
+    lines = wrap(f, s, max_w - tracking * 12)
+    lh = int(size * 1.25)
+    y0 = y_center - lh * len(lines) // 2
+    w = max(text_w(f, l, tracking) for l in lines)
+    img = panel((LEFT - PANEL_PAD, y0 - 26, LEFT + w + PANEL_PAD, y0 + lh * len(lines) + 18))
+    d = ImageDraw.Draw(img)
+    for i, l in enumerate(lines):
+        draw_text(d, (LEFT, y0 + i * lh), l, f, CREAM, tracking)
+    d.rectangle((LEFT, y0 + lh * len(lines) + 2, LEFT + 32, y0 + lh * len(lines) + 4), fill=SAGE)
+    save(img, out_dir, name)
+
+
+def big(out_dir, name, s, sub=None, size=96, y_center=330):
+    """One big number or word in serif, with an optional small caption."""
+    f = lora(size)
+    sf = inter("SemiBold", 18)
+    bbox = f.getbbox(s)
+    w = max(bbox[2], text_w(sf, sub, 5) if sub else 0)
+    h = bbox[3] - bbox[1] + (34 if sub else 0)
+    y0 = y_center - h // 2
+    img = panel((LEFT - PANEL_PAD - 4, y0 - 26, LEFT + w + PANEL_PAD + 4, y0 + h + 26))
+    d = ImageDraw.Draw(img)
+    d.text((LEFT - bbox[0], y0 - bbox[1]), s, font=f, fill=CREAM)
+    if sub:
+        draw_text(d, (LEFT, y0 + bbox[3] - bbox[1] + 14), sub, sf, SAGE, 5)
+    save(img, out_dir, name)
+
+
+def stack(out_dir, prefix, lines, serif=False, size=None, gap=None, y_center=330, max_w=300):
+    """Lines revealed one at a time on a shared panel (no heading).
+
+    Writes <prefix>_panel and <prefix>_<i> per line; long lines wrap.
+    """
+    if serif:
+        f, tracking = lora(size or 30, italic=True), 0
+    else:
+        f, tracking = inter("SemiBold", size or 26), 1
+    lh = int(f.size * 1.22)
+    wrapped = [wrap(f, l, max_w) for l in lines]
+    gap = gap or int(f.size * 0.75)
+    heights = [lh * len(w) for w in wrapped]
+    total = sum(heights) + gap * (len(lines) - 1)
+    y0 = y_center - total // 2
+    w = max(text_w(f, l, tracking) for ws in wrapped for l in ws)
+    save(panel((LEFT - PANEL_PAD - 4, y0 - 28, LEFT + w + PANEL_PAD + 4, y0 + total + 24)),
+         out_dir, prefix + "_panel")
+    y = y0
+    for i, ws in enumerate(wrapped):
+        def fn(d, ws=ws, y=y):
+            for j, l in enumerate(ws):
+                draw_text(d, (LEFT, y + j * lh), l, f, CREAM, tracking)
+        save(layer(fn), out_dir, f"{prefix}_{i}")
+        y += heights[i] + gap
 
 
 # ---------------------------------------------------------------- the video
@@ -282,6 +341,80 @@ def build(out_dir):
 
     # Conclusion
     stacked_lower(out_dir, "f_values", ["APPRECIATION.", "PATIENCE.", "CONSISTENCY."])
+
+    build_retention(out_dir)
+
+
+def build_retention(out_dir):
+    """Extra key-phrase graphics that keep the long talking stretches moving."""
+    # Part 1: hook + why another routine isn't enough
+    stack(out_dir, "x1_proud", ["Proud of your progress?", "Or frustrated?"], serif=True)
+    stack(out_dir, "x1_tried", ["New products", "Different hairstyles", "\u201cI\u2019ll be more consistent\u201d"])
+    big(out_dir, "x1_2027", "2027", sub="THE YEAR?")
+    stack(out_dir, "x1_how", ["How you think about it", "How you feel about it", "What you expect from it"])
+    keyword(out_dir, "x1_novdec", "NOVEMBER + DECEMBER")
+    stack(out_dir, "x1_still", ["Good products, still dread wash day",
+                                "Consistent routine, still disappointed",
+                                "Real progress, still \u201cnot good enough\u201d"], size=24)
+    keyword(out_dir, "x1_beliefs", "BELIEFS + EXPECTATIONS")
+
+    # Part 2: spiritual reset
+    statement(out_dir, "x2_confidence", "Does your confidence depend on how your hair looks?", size=32, max_w=300)
+    statement(out_dir, "x2_appreciate", "Instead of appreciating her progress\u2026", size=32, max_w=300)
+    keyword(out_dir, "x2_worth", "BEAUTY + WORTH \u2260 YOUR HAIR")
+    statement(out_dir, "x2_value", "My appearance was never meant to determine my value.", size=32, max_w=300)
+    statement(out_dir, "x2_heart", "People look at the outward appearance. God looks at the heart.",
+              size=30, max_w=300, y_center=330)
+    keyword(out_dir, "x2_measure", "IMPORTANT \u2260 YOUR MEASURE OF WORTH", size=30)
+    two_blocks(out_dir, "x2_caring", [("CARING FROM", "Appreciation"), ("CARING TO REACH", "A standard")])
+    keyword(out_dir, "x2_first", "YOUR FIRST RESET")
+    statement(out_dir, "x2_wait", "Don\u2019t wait for results to feel good about who you are.", size=32, max_w=300)
+
+    # Part 3: mental reset
+    stack(out_dir, "x3_believed", ["A certain length by now", "The \u201cright\u201d product", "Results like you saw online"])
+    keyword(out_dir, "x3_failed", "\u201cI FAILED.\u201d", size=40)
+    keyword(out_dir, "x3_onesize", "NOT ONE SIZE FITS ALL")
+    stack(out_dir, "x3_differ", ["Hair characteristics", "Genetics", "Routines", "Diet", "Circumstances"], size=24, gap=12)
+    two_blocks(out_dir, "x3_length", [("REASONABLE GOAL", "Better length retention"),
+                                      ("UNREALISTIC", "Her length, her timeline")], body_size=28)
+    stack(out_dir, "x3_measure", ["My hair, my needs?", "Or someone else\u2019s results?"], serif=True)
+    statement(out_dir, "x3_success", "Your journey doesn\u2019t have to look like anyone else\u2019s to be successful.",
+              size=30, max_w=300)
+
+    # Part 4: emotional reset
+    stack(out_dir, "x4_remembers", ["Long detangling", "Exhaustion", "A disappointing style"])
+    stack(out_dir, "x4_postpone", ["POSTPONED.", "AGAIN."], size=34)
+    statement(out_dir, "x4_difficult", "\u201cMy hair is just difficult.\u201d", size=34, max_w=300)
+    stack(out_dir, "x4_triggers", ["Shrinkage \u2192 discouraged", "Slow length \u2192 impatient",
+                                   "One bad style \u2192 giving up"], size=24)
+    statement(out_dir, "x4_valid", "Those feelings are valid.", size=36, max_w=300)
+    stack(out_dir, "x4_setback", ["Rough wash day \u2260 problem hair", "Setback \u2260 lost progress"], size=23)
+    two_blocks(out_dir, "x4_ask", [("INSTEAD OF", "\u201cMy hair is too difficult\u201d"),
+                                   ("ASK", "\u201cWhat\u2019s making this hard?\u201d")], body_size=26)
+    keyword(out_dir, "x4_solution", "FRUSTRATION \u2192 SOLUTION", size=30)
+
+    # Part 5: practical reset
+    keyword(out_dir, "x5_ten", "10 NEW PRODUCTS?")
+    statement(out_dir, "x5_january", "\u2026then discouraged by January.", size=34, max_w=300)
+    keyword(out_dir, "x5_fresh", "STARTING FRESH \u2260 CHANGING EVERYTHING", size=30)
+    stack(out_dir, "x5_working", ["What\u2019s working?", "What isn\u2019t?"], serif=True, size=34)
+    stack(out_dir, "x5_cost", ["TIME", "ENERGY", "MONEY"], size=34, gap=14)
+    list_card(out_dir, "x5_dontneed", "YOU DON\u2019T NEED",
+              ["The most elaborate routine", "DIY products", "30-minute scalp massages"],
+              y0=200, item_gap=52, item_size=22)
+    statement(out_dir, "x5_need", "A routine that meets your hair\u2019s needs, and that you can keep.",
+              size=30, max_w=300)
+    stacked_lower(out_dir, "x5_pro", ["HAIR LOSS OR", "SCALP IRRITATION?", "SEE A PROFESSIONAL."], size=18, gap=28)
+    statement(out_dir, "x5_informed", "Informed decisions, not starting from scratch.", size=32, max_w=300)
+
+    # Final part: plan + conclusion
+    chapter_label(out_dir, "x6_label", "05", "THE TWO-MONTH PLAN")
+    statement(out_dir, "x6_patterns", "Stop repeating the patterns that make it harder.", size=32, max_w=300)
+    stack(out_dir, "x6_understand", ["UNDERSTAND", "APPRECIATE", "CARE"], size=34, gap=14)
+    list_card(out_dir, "x6_comment", "Which needs a reset?", ["Spiritual", "Mental", "Emotional", "Practical"],
+              heading_font=lora(30), y0=190, item_gap=50, item_size=24)
+    big(out_dir, "x6_next", "Next", sub="A REALISTIC ROUTINE", size=80)
+    statement(out_dir, "x6_beauty", "You are God\u2019s standard of beauty.", size=36, max_w=300)
 
 
 if __name__ == "__main__":
